@@ -1,0 +1,49 @@
+[
+  {
+    "id": "c6e52501-4be2-427a-8f95-0ff780fe3600",
+    "email": "admin@asiangoods.ru",
+    "password": "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/8KzKz2a",
+    "firstName": "Администратор",
+    "lastName": "Системы",
+    "phone": "+7 (999) 123-45-67",
+    "role": "admin",
+    "isActive": true,
+    "emailVerified": true,
+    "addresses": [
+      {
+        "id": "429f0ce6-b73c-4216-bc73-739bc8a4e000",
+        "street": "ул. Примерная, д. 1",
+        "city": "Москва",
+        "postalCode": "123456",
+        "country": "Россия",
+        "isDefault": true
+      }
+    ],
+    "preferences": {
+      "newsletter": true,
+      "notifications": true,
+      "language": "ru"
+    },
+    "createdAt": "2025-10-18T05:38:53.761Z",
+    "updatedAt": "2025-10-18T05:38:53.761Z"
+  },
+  {
+    "id": "da6c8ade-dde5-469c-bd02-de92bdc737bb",
+    "email": "customer@example.com",
+    "password": "$2a$12$LQv3c1yqBWVHxkd0LHAkCOYz6TtxMQJqhN8/LewdBPj4J/8KzKz2a",
+    "firstName": "Иван",
+    "lastName": "Петров",
+    "phone": "+7 (999) 765-43-21",
+    "role": "user",
+    "isActive": true,
+    "emailVerified": true,
+    "addresses": [],
+    "preferences": {
+      "newsletter": true,
+      "notifications": false,
+      "language": "ru"
+    },
+    "createdAt": "2025-10-18T05:38:53.761Z",
+    "updatedAt": "2025-10-18T05:38:53.761Z"
+  }
+]

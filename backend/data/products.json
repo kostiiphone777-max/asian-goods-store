@@ -1,0 +1,329 @@
+[
+  {
+    "id": "df90a9a0-aa5e-467d-8246-405a3b581e22",
+    "name": "Соевый соус премиум",
+    "description": "Натуральный соевый соус из Японии, выдержанный 2 года",
+    "price": 890,
+    "originalPrice": 1200,
+    "categoryId": "a305cc62-3904-4d87-97c2-3f9832500da7",
+    "slug": "soy-sauce-premium",
+    "images": [
+      "/premium-japanese-soy-sauce-bottle.jpg"
+    ],
+    "badge": "Хит продаж",
+    "stock": 50,
+    "isActive": true,
+    "tags": [
+      "соус",
+      "япония",
+      "премиум"
+    ],
+    "rating": 4.8,
+    "reviewCount": 24,
+    "weight": "500ml",
+    "country": "Япония",
+    "createdAt": "2025-10-18T05:38:53.704Z",
+    "updatedAt": "2025-10-18T05:38:53.704Z"
+  },
+  {
+    "id": "5db70764-97d0-4690-92cd-512e4073c88c",
+    "name": "Рисовая лапша",
+    "description": "Традиционная вьетнамская лапша из рисовой муки",
+    "price": 280,
+    "categoryId": "a305cc62-3904-4d87-97c2-3f9832500da7",
+    "slug": "rice-noodles",
+    "images": [
+      "/vietnamese-rice-noodles-package.jpg"
+    ],
+    "badge": null,
+    "stock": 100,
+    "isActive": true,
+    "tags": [
+      "лапша",
+      "вьетнам",
+      "рисовая"
+    ],
+    "rating": 4.5,
+    "reviewCount": 18,
+    "weight": "200g",
+    "country": "Вьетнам",
+    "createdAt": "2025-10-18T05:38:53.704Z",
+    "updatedAt": "2025-10-18T05:38:53.704Z"
+  },
+  {
+    "id": "8ed88ec3-5711-4b05-b322-6d90b3d626ef",
+    "name": "Кимчи паста",
+    "description": "Острая корейская паста для приготовления кимчи",
+    "price": 450,
+    "categoryId": "a305cc62-3904-4d87-97c2-3f9832500da7",
+    "slug": "kimchi-paste",
+    "images": [
+      "/korean-kimchi-paste-jar.jpg"
+    ],
+    "badge": "Новинка",
+    "stock": 30,
+    "isActive": true,
+    "tags": [
+      "кимчи",
+      "корея",
+      "острое"
+    ],
+    "rating": 4.6,
+    "reviewCount": 12,
+    "weight": "300g",
+    "country": "Корея",
+    "createdAt": "2025-10-18T05:38:53.704Z",
+    "updatedAt": "2025-10-18T05:38:53.704Z"
+  },
+  {
+    "id": "20da8d6f-e4dd-4ad9-a08d-4f0b02a8eadb",
+    "name": "Васаби порошок",
+    "description": "Японский васаби в порошке для приготовления острого соуса",
+    "price": 320,
+    "categoryId": "a305cc62-3904-4d87-97c2-3f9832500da7",
+    "slug": "wasabi-powder",
+    "images": [
+      "/japanese-wasabi-powder.jpg"
+    ],
+    "badge": null,
+    "stock": 75,
+    "isActive": true,
+    "tags": [
+      "васаби",
+      "япония",
+      "острый"
+    ],
+    "rating": 4.3,
+    "reviewCount": 8,
+    "weight": "50g",
+    "country": "Япония",
+    "createdAt": "2025-10-18T05:38:53.707Z",
+    "updatedAt": "2025-10-18T05:38:53.707Z"
+  },
+  {
+    "id": "3344a620-5001-4d3f-bf49-6b178be27fd1",
+    "name": "Корейская тканевая маска",
+    "description": "Увлажняющая маска с гиалуроновой кислотой",
+    "price": 350,
+    "categoryId": "697d0bc2-0828-4477-98d0-294b0c567808",
+    "slug": "korean-sheet-mask",
+    "images": [
+      "/korean-sheet-face-mask.jpg"
+    ],
+    "badge": "Популярное",
+    "stock": 80,
+    "isActive": true,
+    "tags": [
+      "маска",
+      "корея",
+      "увлажнение"
+    ],
+    "rating": 4.7,
+    "reviewCount": 35,
+    "weight": "25ml",
+    "country": "Корея",
+    "createdAt": "2025-10-18T05:38:53.708Z",
+    "updatedAt": "2025-10-18T05:38:53.709Z"
+  },
+  {
+    "id": "ff3d8069-1434-48c0-a5a0-a09c0ae30fbd",
+    "name": "Корейский солнцезащитный крем",
+    "description": "SPF 50+ солнцезащитный крем с увлажняющим эффектом",
+    "price": 1200,
+    "categoryId": "697d0bc2-0828-4477-98d0-294b0c567808",
+    "slug": "korean-sunscreen",
+    "images": [
+      "/korean-sunscreen-spf50.jpg"
+    ],
+    "badge": "Рекомендуем",
+    "stock": 40,
+    "isActive": true,
+    "tags": [
+      "солнцезащитный",
+      "корея",
+      "spf50"
+    ],
+    "rating": 4.9,
+    "reviewCount": 42,
+    "weight": "60ml",
+    "country": "Корея",
+    "createdAt": "2025-10-18T05:38:53.710Z",
+    "updatedAt": "2025-10-18T05:38:53.710Z"
+  },
+  {
+    "id": "243eebf5-5d18-48fa-84a4-d130306a3a19",
+    "name": "Витамин C сыворотка",
+    "description": "Осветляющая сыворотка с витамином C для сияющей кожи",
+    "price": 1800,
+    "categoryId": "697d0bc2-0828-4477-98d0-294b0c567808",
+    "slug": "vitamin-c-serum",
+    "images": [
+      "/vitamin-c-serum.png"
+    ],
+    "badge": "Эксклюзив",
+    "stock": 25,
+    "isActive": true,
+    "tags": [
+      "сыворотка",
+      "витамин c",
+      "осветление"
+    ],
+    "rating": 4.8,
+    "reviewCount": 28,
+    "weight": "30ml",
+    "country": "Корея",
+    "createdAt": "2025-10-18T05:38:53.710Z",
+    "updatedAt": "2025-10-18T05:38:53.710Z"
+  },
+  {
+    "id": "a1e11674-709b-4889-8f34-1e83cabc27d5",
+    "name": "Набор для чайной церемонии",
+    "description": "Традиционный керамический набор из Японии",
+    "price": 4500,
+    "originalPrice": 6000,
+    "categoryId": "8e78e25a-fa45-4fc0-814a-c209ae0df1f2",
+    "slug": "tea-ceremony-set",
+    "images": [
+      "/japanese-tea-ceremony-set-ceramic.jpg"
+    ],
+    "badge": "Хит продаж",
+    "stock": 15,
+    "isActive": true,
+    "tags": [
+      "чай",
+      "япония",
+      "керамика"
+    ],
+    "rating": 4.9,
+    "reviewCount": 16,
+    "weight": "2.5kg",
+    "country": "Япония",
+    "createdAt": "2025-10-18T05:38:53.711Z",
+    "updatedAt": "2025-10-18T05:38:53.711Z"
+  },
+  {
+    "id": "59f8fb4f-9ffc-41da-a1bb-fde9bd2f23dd",
+    "name": "Бамбуковые палочки",
+    "description": "Набор бамбуковых палочек для еды в подарочной упаковке",
+    "price": 180,
+    "categoryId": "8e78e25a-fa45-4fc0-814a-c209ae0df1f2",
+    "slug": "bamboo-chopsticks",
+    "images": [
+      "/bamboo-chopsticks-set.jpg"
+    ],
+    "badge": null,
+    "stock": 200,
+    "isActive": true,
+    "tags": [
+      "палочки",
+      "бамбук",
+      "подарок"
+    ],
+    "rating": 4.4,
+    "reviewCount": 31,
+    "weight": "50g",
+    "country": "Китай",
+    "createdAt": "2025-10-18T05:38:53.711Z",
+    "updatedAt": "2025-10-18T05:38:53.711Z"
+  },
+  {
+    "id": "57b88a1a-020c-4c9b-9523-e949090f5b44",
+    "name": "Керамические миски для риса",
+    "description": "Набор из 4 керамических мисок для риса",
+    "price": 1200,
+    "categoryId": "8e78e25a-fa45-4fc0-814a-c209ae0df1f2",
+    "slug": "ceramic-rice-bowls",
+    "images": [
+      "/ceramic-rice-bowls.jpg"
+    ],
+    "badge": null,
+    "stock": 60,
+    "isActive": true,
+    "tags": [
+      "миски",
+      "керамика",
+      "рис"
+    ],
+    "rating": 4.6,
+    "reviewCount": 22,
+    "weight": "1.2kg",
+    "country": "Япония",
+    "createdAt": "2025-10-18T05:38:53.711Z",
+    "updatedAt": "2025-10-18T05:38:53.711Z"
+  },
+  {
+    "id": "58932b34-1be3-4ee5-9658-22a50d3be7c9",
+    "name": "Бамбуковое растение",
+    "description": "Счастливый бамбук в декоративной вазе",
+    "price": 1200,
+    "categoryId": "f4a34c00-d921-48a6-9fe8-3ee654b4f19e",
+    "slug": "lucky-bamboo",
+    "images": [
+      "/lucky-bamboo-plant-vase.jpg"
+    ],
+    "badge": null,
+    "stock": 35,
+    "isActive": true,
+    "tags": [
+      "бамбук",
+      "декор",
+      "счастье"
+    ],
+    "rating": 4.5,
+    "reviewCount": 19,
+    "weight": "800g",
+    "country": "Китай",
+    "createdAt": "2025-10-18T05:38:53.711Z",
+    "updatedAt": "2025-10-18T05:38:53.711Z"
+  },
+  {
+    "id": "dd14e78a-f5cb-402b-992d-da6ab7db3a35",
+    "name": "Декоративный веер",
+    "description": "Настенный веер с традиционной росписью",
+    "price": 1800,
+    "categoryId": "f4a34c00-d921-48a6-9fe8-3ee654b4f19e",
+    "slug": "decorative-fan",
+    "images": [
+      "/decorative-wall-fan-asian.jpg"
+    ],
+    "badge": "Эксклюзив",
+    "stock": 20,
+    "isActive": true,
+    "tags": [
+      "веер",
+      "декор",
+      "роспись"
+    ],
+    "rating": 4.7,
+    "reviewCount": 14,
+    "weight": "300g",
+    "country": "Китай",
+    "createdAt": "2025-10-18T05:38:53.711Z",
+    "updatedAt": "2025-10-18T05:38:53.711Z"
+  },
+  {
+    "id": "f12731e9-12a0-411e-a050-21da98620c87",
+    "name": "Керамическая статуэтка Будды",
+    "description": "Декоративная статуэтка Будды из керамики",
+    "price": 2500,
+    "categoryId": "f4a34c00-d921-48a6-9fe8-3ee654b4f19e",
+    "slug": "buddha-statue",
+    "images": [
+      "/ceramic-buddha-statue.jpg"
+    ],
+    "badge": "Рекомендуем",
+    "stock": 12,
+    "isActive": true,
+    "tags": [
+      "будда",
+      "статуэтка",
+      "керамика"
+    ],
+    "rating": 4.8,
+    "reviewCount": 8,
+    "weight": "1.5kg",
+    "country": "Таиланд",
+    "createdAt": "2025-10-18T05:38:53.711Z",
+    "updatedAt": "2025-10-18T05:38:53.711Z"
+  }
+]

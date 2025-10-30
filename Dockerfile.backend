@@ -1,0 +1,18 @@
+FROM node:20-alpine
+WORKDIR /app
+
+# Устанавливаем зависимости бэкенда
+COPY backend/package.json backend/package-lock.json* ./
+RUN npm ci
+
+# Копируем исходники бэкенда
+COPY backend/ .
+
+ENV NODE_ENV=production
+ENV PORT=3001
+EXPOSE 3001
+
+CMD ["node", "server.js"]
+
+
+

@@ -1,0 +1,46 @@
+[
+  {
+    "id": "a305cc62-3904-4d87-97c2-3f9832500da7",
+    "name": "Продукты",
+    "slug": "products",
+    "description": "Азиатские продукты питания: соусы, специи, лапша, рис",
+    "image": "/asian-food-products-soy-sauce-noodles.jpg",
+    "sortOrder": 1,
+    "isActive": true,
+    "createdAt": "2025-10-18T05:38:53.679Z",
+    "updatedAt": "2025-10-18T05:38:53.682Z"
+  },
+  {
+    "id": "697d0bc2-0828-4477-98d0-294b0c567808",
+    "name": "Косметика",
+    "slug": "cosmetics",
+    "description": "K-beauty и J-beauty косметика: маски, кремы, сыворотки",
+    "image": "/korean-japanese-beauty-skincare-products.jpg",
+    "sortOrder": 2,
+    "isActive": true,
+    "createdAt": "2025-10-18T05:38:53.682Z",
+    "updatedAt": "2025-10-18T05:38:53.682Z"
+  },
+  {
+    "id": "8e78e25a-fa45-4fc0-814a-c209ae0df1f2",
+    "name": "Посуда",
+    "slug": "tableware",
+    "description": "Традиционная азиатская посуда: чайные наборы, палочки, миски",
+    "image": "/asian-tea-set-ceramic-bowls.jpg",
+    "sortOrder": 3,
+    "isActive": true,
+    "createdAt": "2025-10-18T05:38:53.682Z",
+    "updatedAt": "2025-10-18T05:38:53.682Z"
+  },
+  {
+    "id": "f4a34c00-d921-48a6-9fe8-3ee654b4f19e",
+    "name": "Декор",
+    "slug": "decor",
+    "description": "Азиатский декор для дома: статуэтки, веера, фонари",
+    "image": "/asian-home-decor-lanterns-fans.jpg",
+    "sortOrder": 4,
+    "isActive": true,
+    "createdAt": "2025-10-18T05:38:53.682Z",
+    "updatedAt": "2025-10-18T05:38:53.682Z"
+  }
+]
