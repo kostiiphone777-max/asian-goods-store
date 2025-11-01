@@ -1,4 +1,4 @@
-// File: C:\Работа\ПРОЕКТЫ\Азиатские товары. Интернет магазин\asian-goods-store Админ панель работает\app\layout.tsx
+// File: C:\Работа\ПРОЕКТЫ\Азиатские товары. Интернет магазин\asian-goods-store\app\layout.tsx
 import * as entry from '../../../app/layout.js'
 import type { ResolvingMetadata, ResolvingViewport } from 'next/dist/lib/metadata/types/metadata-interface.js'
 

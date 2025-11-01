@@ -25,7 +25,7 @@ __webpack_require__.r(__webpack_exports__);
 
 const Analytics = (0,react_server_dom_webpack_server_edge__WEBPACK_IMPORTED_MODULE_0__.registerClientReference)(
 function() { throw new Error("Attempted to call Analytics() from the server but Analytics is on the client. It's not possible to invoke a client function from the server, it can only be rendered as a Component or passed to props of a Client Component."); },
-"C:\\Работа\\ПРОЕКТЫ\\Азиатские товары. Интернет магазин\\asian-goods-store Админ панель работает\\node_modules\\@vercel\\analytics\\dist\\next\\index.mjs",
+"C:\\Работа\\ПРОЕКТЫ\\Азиатские товары. Интернет магазин\\asian-goods-store\\node_modules\\@vercel\\analytics\\dist\\next\\index.mjs",
 "Analytics",
 );
 
