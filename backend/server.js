@@ -15,6 +15,7 @@ const userRoutes = require('./routes/users');
 const orderRoutes = require('./routes/orders');
 const cartRoutes = require('./routes/cart');
 const authRoutes = require('./routes/auth');
+const telegramRoutes = require('./routes/telegram');
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -70,6 +71,7 @@ app.use('/api/categories', categoryRoutes);
 app.use('/api/users', userRoutes);
 app.use('/api/orders', orderRoutes);
 app.use('/api/cart', cartRoutes);
+app.use('/api/telegram', telegramRoutes);
 
 // Health check
 app.get('/api/health', (req, res) => {

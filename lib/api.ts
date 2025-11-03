@@ -361,6 +361,40 @@ class ApiClient {
     return this.request('/orders/admin/popular-products');
   }
 
+  // Telegram настройки
+  async getTelegramSettings() {
+    return this.request('/telegram');
+  }
+
+  async saveTelegramSettings(settings: {
+    botToken: string;
+    chatId: string;
+    isEnabled: boolean;
+  }) {
+    return this.request('/telegram', {
+      method: 'POST',
+      body: JSON.stringify(settings),
+    });
+  }
+
+  async updateTelegramSettings(settings: {
+    botToken?: string;
+    chatId?: string;
+    isEnabled?: boolean;
+  }) {
+    return this.request('/telegram', {
+      method: 'PUT',
+      body: JSON.stringify(settings),
+    });
+  }
+
+  async testTelegramConnection(botToken: string, chatId: string) {
+    return this.request('/telegram/test', {
+      method: 'POST',
+      body: JSON.stringify({ botToken, chatId }),
+    });
+  }
+
   // Утилиты
   async healthCheck() {
     return this.request('/health');

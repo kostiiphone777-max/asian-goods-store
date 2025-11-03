@@ -102,6 +102,16 @@ CREATE TABLE IF NOT EXISTS cart_items (
     UNIQUE(userId, sessionId)
 );
 
+-- Таблица настроек Telegram бота
+CREATE TABLE IF NOT EXISTS telegram_settings (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    botToken TEXT,
+    chatId TEXT,
+    isEnabled BOOLEAN DEFAULT 0,
+    createdAt DATETIME DEFAULT CURRENT_TIMESTAMP,
+    updatedAt DATETIME DEFAULT CURRENT_TIMESTAMP
+);
+
 -- Индексы для оптимизации
 CREATE INDEX IF NOT EXISTS idx_users_email ON users(email);
 CREATE INDEX IF NOT EXISTS idx_products_category ON products(categoryId);

@@ -1,11 +1,20 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight } from "lucide-react"
 import Link from "next/link"
+import Image from "next/image"
 
 export function Hero() {
   return (
     <section className="relative min-h-[600px] flex items-center justify-center overflow-hidden bg-secondary">
-      <div className="absolute inset-0 bg-[url('/traditional-asian-tea-ceremony-minimalist.jpg')] bg-cover bg-center opacity-20" />
+      <div className="absolute inset-0 opacity-20">
+        <Image
+          src="/traditional-asian-tea-ceremony-minimalist.jpg"
+          alt="Traditional Asian Tea Ceremony"
+          fill
+          className="object-cover"
+          priority
+        />
+      </div>
 
       <div className="container relative z-10 mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <h2 className="font-serif text-5xl sm:text-6xl lg:text-7xl font-bold tracking-tight text-foreground mb-6 text-balance">

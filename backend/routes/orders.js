@@ -5,6 +5,7 @@ const Product = require('../models/Product');
 const User = require('../models/User');
 const Cart = require('../models/Cart');
 const db = require('../database/database');
+const telegramService = require('../services/telegram-service');
 
 const router = express.Router();
 
@@ -85,6 +86,15 @@ router.post('/', authenticateToken, [
       const cart = new Cart(cartData);
       cart.clear();
       await cart.save();
+    }
+
+    // Отправляем уведомление в Telegram (в фоне, не блокируем ответ)
+    const user = await User.findById(userId);
+    if (user) {
+      telegramService.sendOrderNotification(order, user).catch(error => {
+        console.error('Ошибка отправки уведомления в Telegram:', error);
+        // Не прерываем выполнение, если уведомление не отправилось
+      });
     }
 
     res.status(201).json(order);

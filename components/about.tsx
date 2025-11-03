@@ -35,7 +35,12 @@ export function About() {
           </div>
           <div className="order-1 lg:order-2">
             <div className="relative aspect-[4/5] rounded-lg overflow-hidden bg-secondary">
-              <img src="/asian-store-interior-traditional-products.jpg" alt="О нас" className="w-full h-full object-cover" />
+              <img 
+                src="/asian-store-interior-traditional-products.jpg" 
+                alt="О нас" 
+                className="w-full h-full object-cover"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>

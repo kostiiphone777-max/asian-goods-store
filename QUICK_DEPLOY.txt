@@ -1,0 +1,211 @@
+==============================================
+ БЫСТРОЕ РАЗВЕРТЫВАНИЕ - КОПИРУЙ И ВСТАВЛЯЙ
+==============================================
+
+Сервер: 45.141.78.168
+PM2 (без Docker)
+
+==============================================
+1. ПОДКЛЮЧЕНИЕ К СЕРВЕРУ
+==============================================
+
+ssh root@45.141.78.168
+
+
+==============================================
+2. СОЗДАНИЕ ДИРЕКТОРИИ
+==============================================
+
+mkdir -p /opt/asian-goods-store
+cd /opt/asian-goods-store
+
+
+==============================================
+3. КЛОНИРОВАНИЕ ПРОЕКТА (если есть Git)
+==============================================
+
+git clone ВАШ_РЕПОЗИТОРИЙ .
+
+(Замените ВАШ_РЕПОЗИТОРИЙ на URL вашего репозитория)
+
+
+==============================================
+4. НАСТРОЙКА BACKEND .ENV
+==============================================
+
+nano backend/.env
+
+--- ВСТАВЬТЕ В ФАЙЛ: ---
+
+PORT=3001
+FRONTEND_URL=http://45.141.78.168
+JWT_SECRET=СГЕНЕРИРУЙТЕ_СЛУЧАЙНУЮ_СТРОКУ_32_СИМВОЛА
+NODE_ENV=production
+
+--- СОХРАНИТЕ: Ctrl+O, Enter, Ctrl+X ---
+
+Генерация JWT_SECRET:
+
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+
+(Скопируйте результат и вставьте в JWT_SECRET)
+
+
+==============================================
+5. НАСТРОЙКА FRONTEND .ENV.LOCAL
+==============================================
+
+nano .env.local
+
+--- ВСТАВЬТЕ В ФАЙЛ: ---
+
+NEXT_PUBLIC_API_URL=http://45.141.78.168:3001/api
+
+--- СОХРАНИТЕ: Ctrl+O, Enter, Ctrl+X ---
+
+
+==============================================
+6. УСТАНОВКА ЗАВИСИМОСТЕЙ
+==============================================
+
+npm install
+cd backend && npm install && cd ..
+npm run build
+
+(Подождите 3-5 минут)
+
+
+==============================================
+7. ЗАПУСК С PM2
+==============================================
+
+mkdir -p logs
+pm2 start ecosystem.config.js
+pm2 save
+pm2 startup
+
+(Выполните команду, которую предложит PM2, затем снова:)
+
+pm2 save
+
+
+==============================================
+8. ПРОВЕРКА
+==============================================
+
+pm2 status
+curl http://localhost:3001/api/health
+
+Откройте в браузере:
+http://45.141.78.168:3000
+
+
+==============================================
+9. НАСТРОЙКА NGINX (убрать :3000 из адреса)
+==============================================
+
+apt update
+apt install nginx -y
+nano /etc/nginx/sites-available/asian-goods
+
+--- ВСТАВЬТЕ В ФАЙЛ: ---
+
+server {
+    listen 80;
+    server_name 45.141.78.168;
+    client_max_body_size 20M;
+
+    location /api/ {
+        proxy_pass http://localhost:3001/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    location /uploads/ {
+        alias /opt/asian-goods-store/backend/uploads/;
+        expires 30d;
+    }
+
+    location /_next/ {
+        proxy_pass http://localhost:3000/_next/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+    }
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+
+--- СОХРАНИТЕ: Ctrl+O, Enter, Ctrl+X ---
+
+Активация:
+
+ln -s /etc/nginx/sites-available/asian-goods /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+nginx -t
+systemctl restart nginx
+systemctl enable nginx
+
+Проверьте: http://45.141.78.168 (БЕЗ :3000)
+
+
+==============================================
+10. TELEGRAM БОТ
+==============================================
+
+1. Telegram -> @BotFather -> /newbot
+   Скопируйте токен
+
+2. Telegram -> @userinfobot
+   Скопируйте Chat ID
+
+3. Откройте: http://45.141.78.168/admin
+   Войдите как администратор
+   Найдите "Настройки Telegram"
+   Вставьте токен и Chat ID
+   Нажмите "Тест подключения"
+   Сохраните
+
+
+==============================================
+ГОТОВО! 🎉
+==============================================
+
+Проверьте:
+✓ Сайт: http://45.141.78.168
+✓ API: http://45.141.78.168/api/health
+✓ Админ: http://45.141.78.168/admin
+
+
+==============================================
+ЧАСТЫЕ КОМАНДЫ
+==============================================
+
+Статус:
+pm2 status
+
+Логи:
+pm2 logs
+
+Перезапуск:
+pm2 restart all
+
+Backup БД:
+cd /opt/asian-goods-store/backend/database
+cp store.db backup_$(date +%Y%m%d).db
+
+==============================================
+

@@ -11,9 +11,10 @@ import { Input } from '@/components/ui/input'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { ProductForm } from '@/components/admin/product-form'
 import { CategoryForm } from '@/components/admin/category-form'
+import { TelegramSettings } from '@/components/admin/telegram-settings'
 import { useUser, useProducts, useOrders, useCategories, usePopularProducts } from '@/hooks/use-api'
 import { api } from '@/lib/api'
-import { Loader2, Edit, Trash2, PlusCircle, Package, FolderOpen, ShoppingCart, BarChart3, Users, DollarSign, TrendingUp, CheckCircle, XCircle, Clock, Truck } from 'lucide-react'
+import { Loader2, Edit, Trash2, PlusCircle, Package, FolderOpen, ShoppingCart, BarChart3, Users, DollarSign, TrendingUp, CheckCircle, XCircle, Clock, Truck, Settings } from 'lucide-react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
@@ -283,7 +284,7 @@ export default function AdminPage() {
         <h1 className="font-serif text-4xl font-bold text-foreground mb-8">Админ-панель</h1>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-4">
+          <TabsList className="grid w-full grid-cols-5">
             <TabsTrigger value="dashboard" className="gap-2">
               <BarChart3 className="h-4 w-4" />
               Дашборд
@@ -299,6 +300,10 @@ export default function AdminPage() {
             <TabsTrigger value="orders" className="gap-2">
               <ShoppingCart className="h-4 w-4" />
               Заказы
+            </TabsTrigger>
+            <TabsTrigger value="settings" className="gap-2">
+              <Settings className="h-4 w-4" />
+              Настройки
             </TabsTrigger>
           </TabsList>
 
@@ -997,6 +1002,10 @@ export default function AdminPage() {
                 </div>
               </CardContent>
             </Card>
+          </TabsContent>
+
+          <TabsContent value="settings" className="space-y-6">
+            <TelegramSettings />
           </TabsContent>
         </Tabs>
       </main>
