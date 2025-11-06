@@ -1,0 +1,187 @@
+# ════════════════════════════════════════════════════════════
+# РАЗВЕРТЫВАНИЕ ИЗ GIT - КОМАНДЫ ДЛЯ КОПИРОВАНИЯ
+# Сервер: 45.141.78.168
+# ════════════════════════════════════════════════════════════
+
+# ─────────────────────────────────────────────────────────────
+# 1. ПОДКЛЮЧЕНИЕ К СЕРВЕРУ
+# ─────────────────────────────────────────────────────────────
+
+ssh root@45.141.78.168
+
+
+# ─────────────────────────────────────────────────────────────
+# 2. КЛОНИРОВАНИЕ ИЗ GIT
+# ─────────────────────────────────────────────────────────────
+
+cd /opt
+git clone ВАШ_РЕПОЗИТОРИЙ asian-goods-store
+cd asian-goods-store
+mkdir -p logs
+
+
+# ─────────────────────────────────────────────────────────────
+# 3. НАСТРОЙКА BACKEND .ENV
+# ─────────────────────────────────────────────────────────────
+
+cat > backend/.env << 'EOF'
+PORT=3001
+FRONTEND_URL=http://45.141.78.168
+NODE_ENV=production
+JWT_SECRET=ВРЕМЕННЫЙ_СЕКРЕТ
+EOF
+
+# Генерируем JWT_SECRET
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+
+# ⚠️ СКОПИРУЙТЕ РЕЗУЛЬТАТ И ВСТАВЬТЕ В КОМАНДУ НИЖЕ вместо YOUR_GENERATED_SECRET:
+
+nano backend/.env
+# Замените ВРЕМЕННЫЙ_СЕКРЕТ на сгенерированную строку
+# Сохраните: Ctrl+O, Enter, Ctrl+X
+
+
+# ─────────────────────────────────────────────────────────────
+# 4. НАСТРОЙКА FRONTEND .ENV.LOCAL
+# ─────────────────────────────────────────────────────────────
+
+cat > .env.local << 'EOF'
+NEXT_PUBLIC_API_URL=http://45.141.78.168:3001/api
+EOF
+
+
+# ─────────────────────────────────────────────────────────────
+# 5. УСТАНОВКА ЗАВИСИМОСТЕЙ
+# ─────────────────────────────────────────────────────────────
+
+npm install
+cd backend && npm install && cd ..
+
+
+# ─────────────────────────────────────────────────────────────
+# 6. СБОРКА FRONTEND
+# ─────────────────────────────────────────────────────────────
+
+npm run build
+
+
+# ─────────────────────────────────────────────────────────────
+# 7. ЗАПУСК PM2
+# ─────────────────────────────────────────────────────────────
+
+pm2 start ecosystem.config.js
+pm2 save
+
+
+# ─────────────────────────────────────────────────────────────
+# 8. НАСТРОЙКА АВТОЗАПУСКА
+# ─────────────────────────────────────────────────────────────
+
+pm2 startup
+# ⚠️ ВЫПОЛНИТЕ КОМАНДУ, КОТОРУЮ ПРЕДЛОЖИТ PM2!
+# Затем снова:
+pm2 save
+
+
+# ─────────────────────────────────────────────────────────────
+# 9. ПРОВЕРКА
+# ─────────────────────────────────────────────────────────────
+
+pm2 status
+pm2 logs --lines 20
+curl http://localhost:3001/api/health
+
+
+# ─────────────────────────────────────────────────────────────
+# 10. НАСТРОЙКА NGINX (опционально)
+# ─────────────────────────────────────────────────────────────
+
+apt update
+apt install nginx -y
+
+cat > /etc/nginx/sites-available/asian-goods << 'EOF'
+server {
+    listen 80;
+    server_name 45.141.78.168;
+    client_max_body_size 20M;
+
+    location /api/ {
+        proxy_pass http://localhost:3001/api/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_cache_bypass $http_upgrade;
+    }
+
+    location /uploads/ {
+        alias /opt/asian-goods-store/backend/uploads/;
+        expires 30d;
+    }
+
+    location /_next/ {
+        proxy_pass http://localhost:3000/_next/;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+    }
+
+    location / {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}
+EOF
+
+ln -s /etc/nginx/sites-available/asian-goods /etc/nginx/sites-enabled/
+rm -f /etc/nginx/sites-enabled/default
+nginx -t
+systemctl restart nginx
+systemctl enable nginx
+
+
+# ════════════════════════════════════════════════════════════
+# ✅ ГОТОВО!
+# ════════════════════════════════════════════════════════════
+
+# Проверьте в браузере:
+# http://45.141.78.168:3000 - сайт
+# http://45.141.78.168:3001/api/health - API
+# http://45.141.78.168 - через Nginx (если настроили)
+
+
+# ════════════════════════════════════════════════════════════
+# ОБНОВЛЕНИЕ В БУДУЩЕМ
+# ════════════════════════════════════════════════════════════
+
+ssh root@45.141.78.168
+cd /opt/asian-goods-store
+git pull origin main
+npm install
+cd backend && npm install && cd ..
+npm run build
+pm2 restart all
+pm2 status
+
+
+# ════════════════════════════════════════════════════════════
+# ПОЛЕЗНЫЕ КОМАНДЫ
+# ════════════════════════════════════════════════════════════
+
+pm2 status                  # Статус
+pm2 logs                    # Логи
+pm2 restart all             # Перезапуск
+pm2 logs asian-goods-backend --lines 50    # Логи backend
+pm2 logs asian-goods-frontend --lines 50   # Логи frontend
+
+# Backup БД
+cd /opt/asian-goods-store/backend/database
+cp store.db backup_$(date +%Y%m%d_%H%M%S).db
+
