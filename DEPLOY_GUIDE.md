@@ -66,6 +66,14 @@ PORT=3001
 FRONTEND_URL=http://45.141.78.168
 JWT_SECRET=ЗАМЕНИТЕ_ЭТОТ_ТЕКСТ_НА_СЛУЧАЙНУЮ_СТРОКУ_МИНИМУМ_32_СИМВОЛА
 NODE_ENV=production
+
+# PostgreSQL настройки
+DB_CLIENT=postgres
+PGHOST=localhost
+PGPORT=5432
+PGDATABASE=magazin
+PGUSER=postgres
+PGPASSWORD=postgres
 ```
 
 **⚠️ ВАЖНО:** Замените `JWT_SECRET` на случайную строку!

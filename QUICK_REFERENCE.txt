@@ -48,25 +48,23 @@ pm2 restart all
 
 
 ┌──────────────────────────────────────────────────────────────┐
-│ BACKUP БАЗЫ ДАННЫХ                                           │
+│ BACKUP БАЗЫ ДАННЫХ (PostgreSQL)                              │
 └──────────────────────────────────────────────────────────────┘
 
-cd /opt/asian-goods-store/backend/database
-cp store.db backup_$(date +%Y%m%d_%H%M%S).db
-ls -lh backup_*.db
+pg_dump -h localhost -p 5432 -U postgres -d magazin -F c -f backup_$(date +%Y%m%d_%H%M%S).dump
 
 
 ┌──────────────────────────────────────────────────────────────┐
-│ РАБОТА С БАЗОЙ ДАННЫХ                                        │
+│ РАБОТА С БАЗОЙ ДАННЫХ (PostgreSQL)                           │
 └──────────────────────────────────────────────────────────────┘
 
-sqlite3 backend/database/store.db
+psql -h localhost -p 5432 -U postgres -d magazin
 
-В SQLite:
-  .tables                           # Список таблиц
+В psql:
+  \dt                               # Список таблиц
   SELECT * FROM telegram_settings;  # Настройки Telegram
-  UPDATE telegram_settings SET isEnabled = 1;  # Включить Telegram
-  .exit                             # Выход
+  UPDATE telegram_settings SET "isEnabled" = true;  # Включить Telegram
+  \q                                # Выход
 
 
 ┌──────────────────────────────────────────────────────────────┐
@@ -84,8 +82,8 @@ Frontend не работает:
   pm2 restart asian-goods-frontend
 
 Telegram не работает:
-  pm2 logs | grep -i telegram
-  sqlite3 backend/database/store.db "SELECT * FROM telegram_settings;"
+  pm2 logs | findstr /i telegram
+  psql -h localhost -U postgres -d magazin -c "SELECT * FROM telegram_settings;"
   pm2 restart asian-goods-backend
 
 
@@ -105,7 +103,7 @@ Telegram не работает:
 /opt/asian-goods-store/
 ├── backend/                 # Backend сервер (Node.js/Express)
 │   ├── server.js            # Главный файл
-│   ├── database/            # База данных SQLite
+│   ├── database/            # База данных PostgreSQL
 │   ├── services/            # Сервисы (Telegram)
 │   └── .env                 # Настройки (JWT_SECRET)
 ├── app/                     # Frontend Next.js
@@ -200,7 +198,7 @@ du -sh logs/            # Размер логов
 └──────────────────────────────────────────────────────────────┘
 
 Автоматический backup (crontab -e):
-  0 2 * * * cd /opt/asian-goods-store/backend/database && cp store.db backup_$(date +\%Y\%m\%d).db
+  0 2 * * * pg_dump -h localhost -p 5432 -U postgres -d magazin -F c -f /backup/asiangoods_$(date +\%Y\%m\%d).dump
 
 Очистка логов (crontab -e):
   0 0 * * 0 find /opt/asian-goods-store/logs -name "*.log" -mtime +7 -delete

@@ -62,6 +62,14 @@ PORT=3001
 FRONTEND_URL=http://45.141.78.168
 NODE_ENV=production
 JWT_SECRET=ВРЕМЕННЫЙ_СЕКРЕТ
+
+# PostgreSQL настройки
+DB_CLIENT=postgres
+PGHOST=localhost
+PGPORT=5432
+PGDATABASE=magazin
+PGUSER=postgres
+PGPASSWORD=postgres
 ```
 
 **Сохраните:** `Ctrl+O`, `Enter`, `Ctrl+X`
@@ -419,4 +427,5 @@ pm2 restart all
 ---
 
 **Удачи! 🚀**
+
 

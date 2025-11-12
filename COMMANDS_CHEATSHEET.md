@@ -76,38 +76,30 @@ pm2 logs --lines 20
 
 ---
 
-## 💾 Backup базы данных
+## 💾 Backup базы данных (PostgreSQL)
 
 ```bash
-cd /opt/asian-goods-store/backend/database
-cp store.db backup_$(date +%Y%m%d_%H%M%S).db
-ls -lh backup_*.db
+# Дамп всей БД в файл (замените параметры при необходимости)
+pg_dump -h localhost -p 5432 -U postgres -d magazin -F c -f backup_$(date +%Y%m%d_%H%M%S).dump
+
+# Восстановление из дампа
+pg_restore -h localhost -p 5432 -U postgres -d magazin --clean --if-exists backup_YYYYMMDD_HHMMSS.dump
 ```
 
 ---
 
-## 🗄️ Работа с базой данных
+## 🗄️ Работа с базой данных (PostgreSQL)
 
 ```bash
-# Открыть SQLite консоль
-cd /opt/asian-goods-store/backend
-sqlite3 database/store.db
+# Открыть psql-консоль
+psql -h localhost -p 5432 -U postgres -d magazin
 ```
 
-### Внутри SQLite:
+### Внутри psql:
 
 ```sql
 -- Показать таблицы
-.tables
-
--- Проверить настройки Telegram
-SELECT * FROM telegram_settings;
-
--- Включить Telegram уведомления
-UPDATE telegram_settings SET isEnabled = 1;
-
--- Выключить
-UPDATE telegram_settings SET isEnabled = 0;
+\dt
 
 -- Посмотреть последние заказы
 SELECT orderNumber, status, total, createdAt 
@@ -115,8 +107,11 @@ FROM orders
 ORDER BY createdAt DESC 
 LIMIT 5;
 
+-- Включить Telegram уведомления
+UPDATE telegram_settings SET "isEnabled" = true;
+
 -- Выйти
-.exit
+\q
 ```
 
 ---

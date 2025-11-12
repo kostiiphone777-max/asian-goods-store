@@ -496,13 +496,15 @@ pm2 restart asian-goods-frontend
 ### Telegram уведомления не работают
 
 ```bash
-# Войдите в базу данных
-cd /opt/asian-goods-store/backend
-sqlite3 database/store.db
+# Подключитесь к PostgreSQL
+psql -h localhost -U postgres -d magazin
 
-# В SQLite:
+# В PostgreSQL:
 SELECT * FROM telegram_settings;
-.exit
+\q
+
+# Или одной командой:
+psql -h localhost -U postgres -d magazin -c "SELECT * FROM telegram_settings;"
 
 # Проверьте логи
 pm2 logs asian-goods-backend | grep -i telegram
@@ -543,13 +545,18 @@ BACKUP_DIR="/backup/asian-goods"
 DATE=$(date +%Y%m%d_%H%M%S)
 mkdir -p $BACKUP_DIR
 
-cd /opt/asian-goods-store/backend/database
-cp store.db "$BACKUP_DIR/backup_${DATE}.db"
+# PostgreSQL backup
+PGHOST=${PGHOST:-localhost}
+PGPORT=${PGPORT:-5432}
+PGDATABASE=${PGDATABASE:-magazin}
+PGUSER=${PGUSER:-postgres}
+
+pg_dump -h $PGHOST -p $PGPORT -U $PGUSER -d $PGDATABASE -F c -f "$BACKUP_DIR/backup_${DATE}.dump"
 
 # Удалить старые backup'ы (старше 7 дней)
-find $BACKUP_DIR -name "backup_*.db" -mtime +7 -delete
+find $BACKUP_DIR -name "backup_*.dump" -mtime +7 -delete
 
-echo "Backup created: $BACKUP_DIR/backup_${DATE}.db"
+echo "Backup created: $BACKUP_DIR/backup_${DATE}.dump"
 ```
 
 Сделайте исполняемым:

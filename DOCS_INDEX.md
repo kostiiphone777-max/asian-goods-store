@@ -164,7 +164,7 @@ pm2 monit
 
 ### Backend
 - [backend/server.js](backend/server.js) - Основной файл сервера
-- [backend/database/schema.sql](backend/database/schema.sql) - Схема БД
+- [backend/database/schema.postgres.sql](backend/database/schema.postgres.sql) - Схема БД (PostgreSQL)
 - [backend/services/telegram-service.js](backend/services/telegram-service.js) - Telegram сервис
 - [backend/routes/telegram.js](backend/routes/telegram.js) - Telegram API
 
@@ -190,8 +190,7 @@ pm2 monit
 
 1. **Всегда делайте backup перед обновлениями**
    ```bash
-   cd /opt/asian-goods-store/backend/database
-   cp store.db backup_$(date +%Y%m%d).db
+   pg_dump -h localhost -p 5432 -U postgres -d magazin -F c -f backup_$(date +%Y%m%d).dump
    ```
 
 2. **Проверяйте логи после изменений**
@@ -207,7 +206,7 @@ pm2 monit
 4. **Настройте автоматические backup'ы**
    ```bash
    crontab -e
-   # Добавьте: 0 2 * * * cd /opt/asian-goods-store/backend/database && cp store.db backup_$(date +\%Y\%m\%d).db
+   # Добавьте: 0 2 * * * pg_dump -h localhost -p 5432 -U postgres -d magazin -F c -f /backup/asiangoods_$(date +\%Y\%m\%d).dump
    ```
 
 5. **Мониторьте использование ресурсов**

@@ -201,7 +201,7 @@ class Order {
 
   static async getProductPopularity() {
     try {
-      const orders = await db.all('SELECT items FROM orders WHERE status != "cancelled"');
+      const orders = await db.all(`SELECT items FROM orders WHERE status != 'cancelled'`);
       const productStats = {};
       
       orders.forEach(order => {

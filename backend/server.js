@@ -1,9 +1,15 @@
+const path = require('path');
+// Загружаем переменные окружения из корневого .env (../.env)
+try {
+  // eslint-disable-next-line import/no-extraneous-dependencies
+  require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
+} catch (_) {}
 const express = require('express');
 const cors = require('cors');
 const helmet = require('helmet');
 const morgan = require('morgan');
 const rateLimit = require('express-rate-limit');
-const path = require('path');
+const pathModule = require('path');
 
 // Импорт базы данных
 const db = require('./database/database');
@@ -45,7 +51,7 @@ app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true }));
 
 // Статические файлы
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+app.use('/uploads', express.static(pathModule.join(__dirname, 'uploads')));
 
 // Тестовый маршрут
 app.get('/api/test', (req, res) => {
@@ -104,9 +110,7 @@ async function startServer() {
   try {
     await db.init();
     
-    // Запускаем миграцию данных
-    const migrateData = require('./scripts/migrate-to-sqlite');
-    await migrateData();
+    // Схема PostgreSQL применяется автоматически при инициализации базы данных
     
     app.listen(PORT, () => {
       console.log(`🚀 Сервер запущен на порту ${PORT}`);

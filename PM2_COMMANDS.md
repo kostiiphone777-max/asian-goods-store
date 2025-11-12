@@ -256,12 +256,11 @@ pm2 restart asian-goods-frontend
 # Проверить логи backend с фильтром
 pm2 logs asian-goods-backend | grep -i telegram
 
-# Проверить настройки в БД
-cd /opt/asian-goods-store/backend
-sqlite3 database/store.db "SELECT * FROM telegram_settings;"
+# Проверить настройки в PostgreSQL
+psql -h localhost -U postgres -d magazin -c "SELECT * FROM telegram_settings;"
 
 # Включить уведомления в БД
-sqlite3 database/store.db "UPDATE telegram_settings SET isEnabled = 1;"
+psql -h localhost -U postgres -d magazin -c "UPDATE telegram_settings SET isEnabled = true;"
 
 # Перезапустить backend
 pm2 restart asian-goods-backend
@@ -321,25 +320,27 @@ netstat -an | grep :3001
 ## 💾 Резервное копирование
 
 ```bash
-# Создать backup базы данных
-cd /opt/asian-goods-store/backend/database
-cp store.db backup_$(date +%Y%m%d_%H%M%S).db
+# Создать backup базы данных PostgreSQL
+BACKUP_DIR="/backup/asian-goods"
+mkdir -p $BACKUP_DIR
+DATE=$(date +%Y%m%d_%H%M%S)
 
-# Backup через sqlite3
-sqlite3 store.db ".backup 'backup_$(date +%Y%m%d_%H%M%S).db'"
+# Backup через pg_dump
+pg_dump -h localhost -U postgres -d magazin -F c -f "$BACKUP_DIR/backup_${DATE}.dump"
+
+# Или в текстовом формате
+pg_dump -h localhost -U postgres -d magazin -f "$BACKUP_DIR/backup_${DATE}.sql"
 
 # Автоматический backup (добавить в cron)
 # crontab -e
-# 0 2 * * * cd /opt/asian-goods-store/backend/database && cp store.db backup_$(date +\%Y\%m\%d).db
+# 0 2 * * * pg_dump -h localhost -U postgres -d magazin -F c -f /backup/asian-goods/backup_$(date +\%Y\%m\%d).dump
 
 # Скачать backup на локальный компьютер
 # С вашего компьютера:
-scp root@45.141.78.168:/opt/asian-goods-store/backend/database/backup_*.db ./backups/
+scp root@45.141.78.168:/backup/asian-goods/backup_*.dump ./backups/
 
 # Восстановить из backup
-cd /opt/asian-goods-store/backend/database
-cp backup_20251103_120000.db store.db
-cd /opt/asian-goods-store
+pg_restore -h localhost -U postgres -d magazin --clean --if-exists /backup/asian-goods/backup_20251103_120000.dump
 pm2 restart asian-goods-backend
 ```
 
