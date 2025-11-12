@@ -1,0 +1,94 @@
+═══════════════════════════════════════════════════════════════
+⚡ БЫСТРАЯ УСТАНОВКА POSTGRESQL
+═══════════════════════════════════════════════════════════════
+
+Копируйте команды по порядку:
+
+───────────────────────────────────────────────────────────────
+
+1. Подключение к серверу:
+
+ssh root@45.141.78.168
+
+───────────────────────────────────────────────────────────────
+
+2. Установка PostgreSQL:
+
+apt update
+apt install postgresql postgresql-contrib postgresql-client -y
+
+───────────────────────────────────────────────────────────────
+
+3. Запуск PostgreSQL:
+
+systemctl start postgresql
+systemctl enable postgresql
+
+───────────────────────────────────────────────────────────────
+
+4. Создание базы данных:
+
+su - postgres -c "createdb magazin"
+
+───────────────────────────────────────────────────────────────
+
+5. Установка пароля для postgres:
+
+sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'ваш_пароль';"
+
+# Замените 'ваш_пароль' на надежный пароль!
+
+───────────────────────────────────────────────────────────────
+
+6. Проверка установки:
+
+systemctl status postgresql
+psql --version
+psql -h localhost -U postgres -d magazin -c "SELECT 1;"
+
+───────────────────────────────────────────────────────────────
+
+7. Обновление .env файла проекта:
+
+cd /opt/asian-goods-store
+nano backend/.env
+
+# Добавьте:
+PGHOST=localhost
+PGPORT=5432
+PGDATABASE=magazin
+PGUSER=postgres
+PGPASSWORD=ваш_пароль
+
+───────────────────────────────────────────────────────────────
+
+8. Применение схемы базы данных:
+
+source backend/.env
+psql -h $PGHOST -U $PGUSER -d $PGDATABASE -f backend/database/schema.postgres.sql
+
+───────────────────────────────────────────────────────────────
+
+9. Перезапуск backend:
+
+pm2 restart asian-goods-backend
+pm2 status
+
+───────────────────────────────────────────────────────────────
+
+═══════════════════════════════════════════════════════════════
+ВСЕ В ОДНОЙ КОМАНДЕ (для опытных)
+═══════════════════════════════════════════════════════════════
+
+apt update && \
+apt install postgresql postgresql-contrib postgresql-client -y && \
+systemctl start postgresql && \
+systemctl enable postgresql && \
+su - postgres -c "createdb magazin" && \
+sudo -u postgres psql -c "ALTER USER postgres PASSWORD 'ваш_пароль';" && \
+systemctl status postgresql
+
+───────────────────────────────────────────────────────────────
+
+═══════════════════════════════════════════════════════════════
+
