@@ -72,6 +72,9 @@ switch ($action) {
                 --exclude=backend/node_modules `
                 --exclude=backend/uploads/* `
                 --exclude=backend/database/store.db `
+                --exclude=backend/database/*.db `
+                --exclude=backend/database/*.sqlite `
+                --exclude=backend/database/schema.sql `
                 --exclude=.git `
                 --exclude=logs `
                 *
@@ -109,11 +112,26 @@ switch ($action) {
             Write-Host "✅ Файлы загружены" -ForegroundColor Green
         }
         
-        # Шаг 4: Проверка .env
+        # Шаг 4: Проверка .env и удаление SQLite файлов
         Write-Host ""
         Write-Host "🔍 Проверка конфигурации..." -ForegroundColor Yellow
         ssh $SERVER_USER@$SERVER_IP @"
 cd $SERVER_PATH
+
+# Удаляем старые SQLite файлы если есть
+if [ -f backend/database/store.db ]; then
+    echo '🗑️  Удаление старого SQLite файла...'
+    rm -f backend/database/store.db
+    echo '✅ SQLite файл удален'
+fi
+
+if [ -f backend/database/schema.sql ]; then
+    echo '🗑️  Удаление старого SQLite schema...'
+    rm -f backend/database/schema.sql
+    echo '✅ SQLite schema удален'
+fi
+
+# Проверяем .env для Postgres
 if [ ! -f backend/.env ]; then
     echo '⚠️  backend/.env не найден! Создаем из примера...'
     cp backend/env.example backend/.env
@@ -121,8 +139,13 @@ if [ ! -f backend/.env ]; then
     echo '   - JWT_SECRET'
     echo '   - FRONTEND_URL=http://45.141.78.168'
     echo '   - PORT=3001'
+    echo '   - PostgreSQL настройки (PGHOST, PGPORT, PGDATABASE, PGUSER, PGPASSWORD)'
 else
     echo '✅ backend/.env найден'
+    # Проверяем, что используется Postgres
+    if ! grep -q 'PGHOST\|POSTGRES_URL\|DATABASE_URL' backend/.env; then
+        echo '⚠️  ВАЖНО: Убедитесь, что в backend/.env настроен PostgreSQL!'
+    fi
 fi
 
 if [ ! -f .env.local ]; then
@@ -153,7 +176,29 @@ npm run build
 echo '✅ Зависимости установлены и проект собран'
 "@
         
-        # Шаг 6: Запуск PM2
+        # Шаг 6: Проверка PostgreSQL и запуск PM2
+        Write-Host ""
+        Write-Host "🔍 Проверка PostgreSQL..." -ForegroundColor Yellow
+        
+        ssh $SERVER_USER@$SERVER_IP @"
+cd $SERVER_PATH
+
+# Проверяем подключение к PostgreSQL
+echo 'Проверка подключения к PostgreSQL...'
+if command -v psql &> /dev/null; then
+    # Пытаемся подключиться (читаем настройки из .env)
+    source backend/.env 2>/dev/null || true
+    if psql -h \${PGHOST:-localhost} -U \${PGUSER:-postgres} -d \${PGDATABASE:-postgres} -c 'SELECT 1;' &>/dev/null; then
+        echo '✅ PostgreSQL доступен'
+    else
+        echo '⚠️  Не удалось подключиться к PostgreSQL'
+        echo '   Проверьте настройки в backend/.env'
+    fi
+else
+    echo '⚠️  psql не найден, пропускаем проверку'
+fi
+"@
+        
         Write-Host ""
         Write-Host "🚀 Запуск с PM2..." -ForegroundColor Yellow
         
@@ -202,6 +247,12 @@ pm2 status
                 --exclude=node_modules `
                 --exclude=.next `
                 --exclude=backend/node_modules `
+                --exclude=backend/database/store.db `
+                --exclude=backend/database/*.db `
+                --exclude=backend/database/*.sqlite `
+                --exclude=backend/database/schema.sql `
+                --exclude=.git `
+                --exclude=logs `
                 *
                 
             scp $tempArchive "$SERVER_USER@$SERVER_IP`:$SERVER_PATH/deploy.tar.gz"
@@ -209,6 +260,7 @@ pm2 status
             Remove-Item $tempArchive
             
             Write-Host "✅ Код загружен" -ForegroundColor Green
+            Write-Host "   Теперь выполните пункт 3 для обновления и перезапуска" -ForegroundColor Yellow
         } else {
             Write-Host "⚠️  Используйте tar или загрузите файлы вручную через WinSCP" -ForegroundColor Yellow
         }
@@ -221,12 +273,28 @@ pm2 status
         ssh $SERVER_USER@$SERVER_IP @"
 cd $SERVER_PATH
 
+# Удаляем старые SQLite файлы если есть
+if [ -f backend/database/store.db ]; then
+    echo '🗑️  Удаление старого SQLite файла...'
+    rm -f backend/database/store.db
+fi
+
 echo '📦 Установка зависимостей...'
 npm install --production=false
 cd backend && npm install && cd ..
 
 echo '🔨 Сборка frontend...'
 npm run build
+
+echo '🔍 Проверка PostgreSQL...'
+source backend/.env 2>/dev/null || true
+if command -v psql &> /dev/null; then
+    if psql -h \${PGHOST:-localhost} -U \${PGUSER:-postgres} -d \${PGDATABASE:-postgres} -c 'SELECT 1;' &>/dev/null; then
+        echo '✅ PostgreSQL доступен'
+    else
+        echo '⚠️  Не удалось подключиться к PostgreSQL'
+    fi
+fi
 
 echo '🔄 Перезапуск PM2...'
 pm2 restart all
@@ -293,15 +361,26 @@ pm2 status
     
     "7" {
         Write-Host ""
-        Write-Host "💾 Создание backup базы данных..." -ForegroundColor Yellow
+        Write-Host "💾 Создание backup PostgreSQL базы данных..." -ForegroundColor Yellow
         
         $timestamp = Get-Date -Format "yyyyMMdd_HHmmss"
-        $backupName = "backup_$timestamp.db"
+        $backupName = "postgres_backup_$timestamp.sql"
         
         ssh $SERVER_USER@$SERVER_IP @"
-cd $SERVER_PATH/backend/database
-cp store.db $backupName
-echo 'Backup создан: $backupName'
+cd $SERVER_PATH
+
+# Читаем настройки из .env
+source backend/.env 2>/dev/null || true
+
+# Создаем backup PostgreSQL
+if command -v pg_dump &> /dev/null; then
+    echo 'Создание backup PostgreSQL...'
+    pg_dump -h \${PGHOST:-localhost} -U \${PGUSER:-postgres} -d \${PGDATABASE:-postgres} > backend/database/$backupName
+    echo 'Backup создан: $backupName'
+else
+    echo '❌ pg_dump не найден. Установите PostgreSQL клиент.'
+    exit 1
+fi
 "@
         
         Write-Host "📥 Скачивание backup..." -ForegroundColor Yellow
@@ -313,6 +392,7 @@ echo 'Backup создан: $backupName'
         scp "$SERVER_USER@$SERVER_IP`:$SERVER_PATH/backend/database/$backupName" "$backupDir\"
         
         Write-Host "✅ Backup сохранен: $backupDir\$backupName" -ForegroundColor Green
+        Write-Host "   Для восстановления используйте: psql -h HOST -U USER -d DATABASE < $backupName" -ForegroundColor Gray
     }
     
     "0" {
