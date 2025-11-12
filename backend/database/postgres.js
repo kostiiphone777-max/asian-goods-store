@@ -14,17 +14,24 @@ class PostgresDatabase {
       process.env.DATABASE_URL ||
       undefined;
 
-    this.pool = new Pool(
-      connectionString
-        ? { connectionString }
-        : {
-            host: process.env.PGHOST || 'localhost',
-            port: Number(process.env.PGPORT || 5432),
-            database: process.env.PGDATABASE || 'postgres',
-            user: process.env.PGUSER || 'postgres',
-            password: process.env.PGPASSWORD || '',
-          }
-    );
+    // Если есть connection string, используем его
+    if (connectionString) {
+      this.pool = new Pool({ connectionString });
+    } else {
+      // Используем отдельные переменные, проверяя тип пароля
+      const password = process.env.PGPASSWORD;
+      if (password !== undefined && typeof password !== 'string') {
+        throw new Error(`PGPASSWORD must be a string, got ${typeof password}. Check your .env file.`);
+      }
+
+      this.pool = new Pool({
+        host: process.env.PGHOST || 'localhost',
+        port: Number(process.env.PGPORT || 5432),
+        database: process.env.PGDATABASE || 'postgres',
+        user: process.env.PGUSER || 'postgres',
+        password: password || '',
+      });
+    }
 
     // Проверяем подключение
     await this.pool.query('SELECT 1');

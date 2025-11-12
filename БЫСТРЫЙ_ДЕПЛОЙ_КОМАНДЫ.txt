@@ -1,0 +1,253 @@
+═══════════════════════════════════════════════════════════════
+⚡ БЫСТРЫЙ ДЕПЛОЙ - КОПИРУЙ И ВСТАВЛЯЙ
+═══════════════════════════════════════════════════════════════
+
+Сервер: root@45.141.78.168
+PostgreSQL: нужно создать БД и пользователя
+
+═══════════════════════════════════════════════════════════════
+ШАГ 1: ПОДКЛЮЧЕНИЕ К СЕРВЕРУ
+═══════════════════════════════════════════════════════════════
+
+ssh root@45.141.78.168
+
+═══════════════════════════════════════════════════════════════
+ШАГ 2: ПРОВЕРКА ИНСТРУМЕНТОВ
+═══════════════════════════════════════════════════════════════
+
+node --version
+npm --version
+pm2 --version
+psql --version
+
+# Если чего-то нет, установите:
+# Node.js:
+curl -fsSL https://deb.nodesource.com/setup_20.x | bash -
+apt-get install -y nodejs
+
+# PM2:
+npm install -g pm2
+
+# Проверка PostgreSQL:
+systemctl status postgresql
+systemctl start postgresql
+systemctl enable postgresql
+
+═══════════════════════════════════════════════════════════════
+ШАГ 3: СОЗДАНИЕ ПОЛЬЗОВАТЕЛЯ И БАЗЫ ДАННЫХ POSTGRESQL
+═══════════════════════════════════════════════════════════════
+
+# Подключитесь к PostgreSQL
+sudo -u postgres psql
+
+# Внутри psql выполните:
+CREATE USER magazin_user WITH PASSWORD '27061406';
+CREATE DATABASE magazin OWNER magazin_user;
+GRANT ALL PRIVILEGES ON DATABASE magazin TO magazin_user;
+\q
+
+# ИЛИ используйте пользователя postgres (установите пароль):
+sudo -u postgres psql
+ALTER USER postgres WITH PASSWORD '27061406';
+CREATE DATABASE magazin;
+\q
+
+═══════════════════════════════════════════════════════════════
+⚠️ ВАЖНО: ПРОВЕРКА ПОДКЛЮЧЕНИЯ
+═══════════════════════════════════════════════════════════════
+
+# PostgreSQL использует peer authentication для локальных подключений
+# Для проверки подключения ОБЯЗАТЕЛЬНО используйте -h localhost
+# Это заставит использовать TCP/IP подключение с паролем
+
+# Вариант 1: С вводом пароля (введите пароль при запросе):
+psql -h localhost -U magazin_user -d magazin -c "SELECT version();"
+# Пароль: 27061406
+
+# Вариант 2: С переменной окружения (без ввода пароля):
+PGPASSWORD=27061406 psql -h localhost -U magazin_user -d magazin -c "SELECT version();"
+
+# Если видите версию PostgreSQL - подключение работает! ✅
+
+═══════════════════════════════════════════════════════════════
+ШАГ 4: СОЗДАНИЕ ДИРЕКТОРИИ ПРОЕКТА
+═══════════════════════════════════════════════════════════════
+
+mkdir -p /opt/asian-goods-store
+cd /opt/asian-goods-store
+
+═══════════════════════════════════════════════════════════════
+ШАГ 5: ЗАГРУЗКА ПРОЕКТА
+═══════════════════════════════════════════════════════════════
+
+# Вариант A: Через Git (если проект в репозитории)
+git clone ВАШ_РЕПОЗИТОРИЙ .
+
+# Вариант B: Через SCP (с вашего компьютера в PowerShell):
+# tar -czf deploy.tar.gz --exclude=node_modules --exclude=.next --exclude=backend/node_modules --exclude=.git *
+# scp deploy.tar.gz root@45.141.78.168:/opt/asian-goods-store/
+# ssh root@45.141.78.168 "cd /opt/asian-goods-store && tar -xzf deploy.tar.gz && rm deploy.tar.gz"
+
+═══════════════════════════════════════════════════════════════
+ШАГ 6: СОЗДАНИЕ .env ДЛЯ BACKEND
+═══════════════════════════════════════════════════════════════
+
+nano backend/.env
+
+# Скопируйте и вставьте (ЗАМЕНИТЕ ПАРОЛИ!):
+PORT=3001
+FRONTEND_URL=http://45.141.78.168:3000
+JWT_SECRET=cf27ac8560bcc7127456d5c8c33a6f0433f5d6263e1af098a7aa6a2cb422f49b
+NODE_ENV=production
+DB_CLIENT=postgres
+PGHOST=localhost
+PGPORT=5432
+PGDATABASE=magazin
+PGUSER=magazin_user
+PGPASSWORD=27061406
+
+# Сохраните: Ctrl+O, Enter, Ctrl+X
+
+═══════════════════════════════════════════════════════════════
+ШАГ 7: СОЗДАНИЕ .env.local ДЛЯ FRONTEND
+═══════════════════════════════════════════════════════════════
+
+nano .env.local
+
+# Скопируйте и вставьте:
+NEXT_PUBLIC_API_URL=http://45.141.78.168:3001/api
+
+# Сохраните: Ctrl+O, Enter, Ctrl+X
+
+═══════════════════════════════════════════════════════════════
+ШАГ 8: УСТАНОВКА ЗАВИСИМОСТЕЙ
+═══════════════════════════════════════════════════════════════
+
+cd /opt/asian-goods-store
+npm install --production=false
+cd backend && npm install && cd ..
+
+═══════════════════════════════════════════════════════════════
+ШАГ 9: ПРИМЕНЕНИЕ СХЕМЫ БАЗЫ ДАННЫХ
+═══════════════════════════════════════════════════════════════
+
+cd /opt/asian-goods-store
+source backend/.env
+psql -h $PGHOST -U $PGUSER -d $PGDATABASE -f backend/database/schema.postgres.sql
+
+# ИЛИ если переменные не работают (введите пароль при запросе):
+psql -h localhost -U magazin_user -d magazin -f backend/database/schema.postgres.sql
+
+# ИЛИ с переменной окружения для пароля:
+PGPASSWORD=27061406 psql -h localhost -U magazin_user -d magazin -f backend/database/schema.postgres.sql
+
+# Проверка таблиц (введите пароль при запросе):
+psql -h localhost -U magazin_user -d magazin -c "\dt"
+
+# ИЛИ с переменной окружения:
+PGPASSWORD=27061406 psql -h localhost -U magazin_user -d magazin -c "\dt"
+
+═══════════════════════════════════════════════════════════════
+ШАГ 10: СБОРКА FRONTEND
+═══════════════════════════════════════════════════════════════
+
+cd /opt/asian-goods-store
+npm run build
+
+═══════════════════════════════════════════════════════════════
+ШАГ 11: СОЗДАНИЕ АДМИНИСТРАТОРА
+═══════════════════════════════════════════════════════════════
+
+mkdir -p logs
+cd backend
+source ../backend/.env 2>/dev/null || true
+node scripts/create-admin-user.js
+cd ..
+
+═══════════════════════════════════════════════════════════════
+ШАГ 12: ЗАПУСК ЧЕРЕЗ PM2
+═══════════════════════════════════════════════════════════════
+
+cd /opt/asian-goods-store
+pm2 delete all 2>/dev/null || true
+pm2 start ecosystem.config.js
+pm2 save
+pm2 startup
+# Выполните команду, которую PM2 выведет
+
+═══════════════════════════════════════════════════════════════
+ШАГ 13: ПРОВЕРКА РАБОТЫ
+═══════════════════════════════════════════════════════════════
+
+# Статус PM2
+pm2 status
+
+# Логи
+pm2 logs --lines 20
+
+# Проверка API
+curl http://localhost:3001/api/health
+
+# Проверка в браузере:
+# http://45.141.78.168:3000
+# http://45.141.78.168:3000/admin
+
+═══════════════════════════════════════════════════════════════
+ВСЕ В ОДНОЙ КОМАНДЕ (после загрузки проекта)
+═══════════════════════════════════════════════════════════════
+
+cd /opt/asian-goods-store && \
+npm install --production=false && \
+cd backend && npm install && cd .. && \
+source backend/.env && \
+PGPASSWORD=$PGPASSWORD psql -h $PGHOST -U $PGUSER -d $PGDATABASE -f backend/database/schema.postgres.sql && \
+npm run build && \
+mkdir -p logs && \
+cd backend && node scripts/create-admin-user.js && cd .. && \
+pm2 delete all 2>/dev/null || true && \
+pm2 start ecosystem.config.js && \
+pm2 save && \
+pm2 status
+
+═══════════════════════════════════════════════════════════════
+ПОЛЕЗНЫЕ КОМАНДЫ
+═══════════════════════════════════════════════════════════════
+
+# Перезапуск PM2
+pm2 restart all
+
+# Логи
+pm2 logs asian-goods-backend --lines 50
+pm2 logs asian-goods-frontend --lines 50
+
+# Статус
+pm2 status
+
+# Мониторинг
+pm2 monit
+
+# Backup базы данных (введите пароль при запросе):
+pg_dump -h localhost -U magazin_user -d magazin > backup_$(date +%Y%m%d_%H%M%S).sql
+
+# ИЛИ с переменной окружения:
+PGPASSWORD=27061406 pg_dump -h localhost -U magazin_user -d magazin > backup_$(date +%Y%m%d_%H%M%S).sql
+
+# Обновление проекта (если используете Git)
+cd /opt/asian-goods-store
+git pull origin main
+npm install --production=false
+cd backend && npm install && cd ..
+npm run build
+pm2 restart all
+
+═══════════════════════════════════════════════════════════════
+ДАННЫЕ ДЛЯ ВХОДА В АДМИН-ПАНЕЛЬ
+═══════════════════════════════════════════════════════════════
+
+Email: admin@example.com
+Пароль: admin123
+
+⚠️ ВАЖНО: Смените пароль после первого входа!
+
+═══════════════════════════════════════════════════════════════
+

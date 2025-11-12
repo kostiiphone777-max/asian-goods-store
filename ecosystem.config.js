@@ -10,7 +10,15 @@ module.exports = {
       max_memory_restart: '500M',
       env: {
         NODE_ENV: 'production',
-        PORT: 3001
+        PORT: 3001,
+        POSTGRES_URL: 'postgres://magazin_user:27061406@localhost:5432/magazin',
+        PGHOST: 'localhost',
+        PGPORT: '5432',
+        PGDATABASE: 'magazin',
+        PGUSER: 'magazin_user',
+        PGPASSWORD: '27061406',
+        FRONTEND_URL: 'https://45.141.78.168',
+        JWT_SECRET: 'cf27ac8560bcc7127456d5c8c33a6f0433f5d6263e1af098a7aa6a2cb422f49b'
       },
       error_file: './logs/backend-error.log',
       out_file: './logs/backend-out.log',

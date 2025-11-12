@@ -1,5 +1,10 @@
 const path = require('path');
-// Загружаем переменные окружения из корневого .env (../.env)
+// Загружаем переменные окружения из backend/.env
+try {
+  // eslint-disable-next-line import/no-extraneous-dependencies
+  require('dotenv').config({ path: path.resolve(__dirname, '.env') });
+} catch (_) {}
+// Также пробуем загрузить из корня (для совместимости)
 try {
   // eslint-disable-next-line import/no-extraneous-dependencies
   require('dotenv').config({ path: path.resolve(__dirname, '..', '.env') });
