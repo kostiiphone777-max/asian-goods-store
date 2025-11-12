@@ -24,15 +24,26 @@ git pull origin main
 
 ───────────────────────────────────────────────────────────────
 
-4. Загрузка переменных окружения:
+4. Загрузка переменных окружения (ОБЯЗАТЕЛЬНО!):
 
 source backend/.env
+
+# Проверьте, что переменные загружены:
+echo "Host: $PGHOST"
+echo "User: $PGUSER"
+echo "Database: $PGDATABASE"
+
+# Если переменные пустые - проверьте файл .env:
+# cat backend/.env
 
 ───────────────────────────────────────────────────────────────
 
 5. Проверка подключения к PostgreSQL:
 
 psql -h $PGHOST -U $PGUSER -d $PGDATABASE -c "SELECT 1;"
+
+# ИЛИ если переменные не работают, используйте прямые значения:
+# psql -h localhost -U postgres -d magazin -c "SELECT 1;"
 
 ───────────────────────────────────────────────────────────────
 
@@ -44,7 +55,11 @@ psql -h $PGHOST -U $PGUSER -d postgres -c "CREATE DATABASE magazin;" 2>/dev/null
 
 7. Применение схемы (создание таблиц):
 
+# Убедитесь, что переменные загружены (source backend/.env)
 psql -h $PGHOST -U $PGUSER -d $PGDATABASE -f backend/database/schema.postgres.sql
+
+# ИЛИ если переменные не работают:
+# psql -h localhost -U postgres -d magazin -f backend/database/schema.postgres.sql
 
 ───────────────────────────────────────────────────────────────
 
@@ -84,10 +99,18 @@ curl http://localhost:3001/api/health
 
 cd /opt/asian-goods-store && \
 source backend/.env && \
+echo "Проверка переменных: Host=$PGHOST, User=$PGUSER, DB=$PGDATABASE" && \
 psql -h $PGHOST -U $PGUSER -d postgres -c "CREATE DATABASE magazin;" 2>/dev/null || true && \
 psql -h $PGHOST -U $PGUSER -d $PGDATABASE -f backend/database/schema.postgres.sql && \
 pm2 restart asian-goods-backend && \
 pm2 status
+
+# ВАЖНО: Если переменные пустые, используйте прямые значения:
+# cd /opt/asian-goods-store && \
+# psql -h localhost -U postgres -d postgres -c "CREATE DATABASE magazin;" 2>/dev/null || true && \
+# psql -h localhost -U postgres -d magazin -f backend/database/schema.postgres.sql && \
+# pm2 restart asian-goods-backend && \
+# pm2 status
 
 ───────────────────────────────────────────────────────────────
 
